@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 @AllArgsConstructor
 @Service
-public class JwtService {
+public class JwtService  {
     private final String ENCRIPTION_KEY = "608f36e92dc66d97d5933f0e6371493cb4fc05b1aa8f8de64014732472303a7c";
     private UtilisateurService utilisateurService;
 

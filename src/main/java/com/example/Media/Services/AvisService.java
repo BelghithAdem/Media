@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 public class AvisService {
@@ -23,4 +25,8 @@ public class AvisService {
         avis.setUtilisateur(utilisateur);
         this.avisRepository.save(avis);
     }
+
+  public List<Avis> liste() {
+    return this.avisRepository.findAll();
+  }
 }

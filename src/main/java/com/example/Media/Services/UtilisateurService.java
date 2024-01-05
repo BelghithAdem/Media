@@ -41,12 +41,18 @@ public class UtilisateurService implements UserDetailsService {
         String mdpCrypte = passwordEncoder.encode(utilisateur.getPassword());
         utilisateur.setMdp(mdpCrypte);
 
-        Role roleUtilisateur = new Role();
+        final Role roleUtilisateur = new Role();
         roleUtilisateur.setLibelle(TypeDeRole.UTILISATEUR);
-        utilisateur.setRole(roleUtilisateur);
-
+        if(utilisateur.getRole() != null && utilisateur.getRole().getLibelle().equals(TypeDeRole.ADMINISTRATEUR)){
+          roleUtilisateur.setLibelle(TypeDeRole.ADMINISTRATEUR);
+          utilisateur.setActif(true);
+        }
+      utilisateur.setRole(roleUtilisateur);
         utilisateur = utilisateurRespository.save(utilisateur);
+      if(roleUtilisateur.getLibelle().equals(TypeDeRole.UTILISATEUR)) {
         validationService.enregister(utilisateur);
+      }
+
     }
 
 

@@ -9,8 +9,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,7 +40,16 @@ public class Utilisateur implements UserDetails {
     @JoinColumn(name = "friend_list_id")
     private FriendList friendList;
 
-    @Override
+  @ManyToMany
+  private List<Post> savedBy = new ArrayList<>();
+
+
+
+
+
+
+
+  @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.getLibelle()));
     }

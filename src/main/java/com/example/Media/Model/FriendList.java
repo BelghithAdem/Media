@@ -13,15 +13,12 @@ import java.util.List;
 @Table(name = "friend_list")
 public class FriendList {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @OneToMany(mappedBy = "friendList", cascade = CascadeType.ALL)
-    private List<Utilisateur> userList;
-
-    @Column(name = "nbr_user")
-    private int numberOfUsers;
+  @OneToMany(mappedBy = "friendList", cascade = CascadeType.PERSIST)
+  private List<Utilisateur> userList;
 
     // Getters and setters
     // ...
@@ -42,11 +39,7 @@ public class FriendList {
         this.userList = userList;
     }
 
-    public int getNumberOfUsers() {
-        return numberOfUsers;
-    }
 
-    public void setNumberOfUsers(int numberOfUsers) {
-        this.numberOfUsers = numberOfUsers;
-    }
+
+
 }
