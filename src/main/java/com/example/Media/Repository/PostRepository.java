@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-  @Query("SELECT u FROM Utilisateur u WHERE u.id = :userId")
-  Optional<Utilisateur> findUserById(@Param("userId") Long userId);
+
 
 
 

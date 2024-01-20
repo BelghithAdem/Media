@@ -16,10 +16,11 @@ public class Post {
   private Integer id;
 
   private String caption;
-  private String image;
-  private String video;
 
-  @JsonIgnore
+  private String imageFileName;
+  private String videoFileName; // Nouveau champ pour stocker le nom du fichier de l'image
+
+
   @ManyToOne
   private Utilisateur user;
 
@@ -32,10 +33,10 @@ public class Post {
   public Post() {
   }
 
-  public Post(String caption, String image, String video, Utilisateur user, LocalDateTime createdAt) {
+  public Post(String caption, String imageFileName,String videoFileName, Utilisateur user, LocalDateTime createdAt) {
     this.caption = caption;
-    this.image = image;
-    this.video = video;
+    this.imageFileName = imageFileName;
+    this.videoFileName=videoFileName;
     this.user = user;
     this.createdAt = createdAt;
   }
@@ -49,6 +50,7 @@ public class Post {
     this.id = id;
   }
 
+
   public String getCaption() {
     return caption;
   }
@@ -57,20 +59,19 @@ public class Post {
     this.caption = caption;
   }
 
-  public String getImage() {
-    return image;
+  public String getImageFileName() {
+    return imageFileName;
   }
 
-  public void setImage(String image) {
-    this.image = image;
+  public void setVideoFileName(String imageFileName) {
+    this.videoFileName = videoFileName;
+  }
+  public String getVideoFileName() {
+    return videoFileName;
   }
 
-  public String getVideo() {
-    return video;
-  }
-
-  public void setVideo(String video) {
-    this.video = video;
+  public void setImageFileName(String imageFileName) {
+    this.imageFileName = imageFileName;
   }
 
   public Utilisateur getUser() {
@@ -88,8 +89,6 @@ public class Post {
   public void setLiked(List<Utilisateur> liked) {
     this.liked = liked;
   }
-
-
 
   public LocalDateTime getCreatedAt() {
     return createdAt;

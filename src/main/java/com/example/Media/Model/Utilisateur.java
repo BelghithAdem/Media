@@ -112,4 +112,6 @@ public class Utilisateur implements UserDetails {
     public void setActif(boolean actif) {
         this.actif = actif;
     }
+
+
 }
