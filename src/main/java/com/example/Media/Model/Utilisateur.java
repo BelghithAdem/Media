@@ -27,11 +27,15 @@ public class Utilisateur implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Use Long instead of String for the id field
 
+
     @Column(name = "mot_de_passe")
     private String mdp;
     private String nom;
     private String email;
     private boolean actif = false;
+    private String profileimg;
+
+
 
     @ManyToOne(cascade = CascadeType.ALL) // Use ManyToOne for Role relationship
     private Role role;
@@ -58,6 +62,8 @@ public class Utilisateur implements UserDetails {
     public String getPassword() {
         return this.mdp;
     }
+
+    public String getProfileimg(){return this.profileimg;}
 
     @Override
     public String getUsername() {
@@ -96,6 +102,9 @@ public class Utilisateur implements UserDetails {
     public void setId(Long id) {
         this.id = id;
     }
+  public void setProfileimg(String profileimg) {
+    this.profileimg = profileimg;
+  }
 
     public String getNom() {
         return nom;

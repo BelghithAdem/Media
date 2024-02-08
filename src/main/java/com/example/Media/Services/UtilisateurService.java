@@ -6,15 +6,21 @@ import com.example.Media.Model.Utilisateur;
 import com.example.Media.Model.Validation;
 import com.example.Media.Repository.UtilisateurRespository;
 import com.example.Media.TypeDeRole;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @AllArgsConstructor
 @Service
@@ -22,6 +28,8 @@ public class UtilisateurService implements UserDetailsService {
     private UtilisateurRespository utilisateurRespository;
     private ValidationService validationService;
     private BCryptPasswordEncoder passwordEncoder;
+  @Autowired
+  private FileStorageService fileStorageService;  // Ajout de l'injection de dépendance
 
     public void inscription(Utilisateur utilisateur) {
         if (!utilisateur.getUsername().contains("@")) {
@@ -72,10 +80,41 @@ public class UtilisateurService implements UserDetailsService {
     }
 
 
-    @Override
+  public void updateUserProfile(Long userId, MultipartFile profileImage) {
+    Optional<Utilisateur> optionalUser = utilisateurRespository.findById(userId);
+    if (optionalUser.isPresent()) {
+      Utilisateur user = optionalUser.get();
+      // Vérifier si un fichier d'image a été fourni
+      if (profileImage != null && !profileImage.isEmpty()) {
+        try {
+          String fileName = "profile_" + user.getId() + "_" + profileImage.getOriginalFilename();
+          fileStorageService.storeFile(profileImage, fileName);
+          user.setProfileimg(fileName);  // Utiliser le nom du fichier au lieu des données binaires
+          utilisateurRespository.save(user); // Enregistrer les modifications dans la base de données
+        } catch (Exception e) {
+          throw new RuntimeException("Erreur lors du stockage de l'image de profil", e);
+        }
+      } else {
+        throw new RuntimeException("Le fichier média est requis");
+      }
+    } else {
+      throw new RuntimeException("Utilisateur non trouvé");
+    }
+  }
+
+
+
+
+
+  @Override
     public Utilisateur loadUserByUsername(String username) throws UsernameNotFoundException {
         return this.utilisateurRespository
                 .findByEmail(username)
                 .orElseThrow(() -> new  UsernameNotFoundException("Aucun utilisateur ne corespond à cet identifiant"));
     }
-}
+
+  }
+
+
+
+

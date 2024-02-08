@@ -14,12 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @ComponentScan
@@ -73,4 +72,26 @@ public class UtilisateurControlleur {
         }
         return null;
     }
+
+
+  @PostMapping("/user/{userId}/profil")
+  public ResponseEntity<?> updateUserProfile(
+    @RequestParam(name = "profileImage", required = false) Optional<MultipartFile> profileImage,
+    @PathVariable Long userId
+  ) {
+    try {
+      if (profileImage.isPresent()) {
+        utilisateurService.updateUserProfile(userId, profileImage.get());
+        return ResponseEntity.ok("Profil utilisateur mis à jour avec succès.");
+      } else {
+        return ResponseEntity.badRequest().body("Aucune image de profil fournie.");
+      }
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Erreur lors de la mise à jour du profil utilisateur: " + e.getMessage());
+    }
+  }
+
+
+
 }
