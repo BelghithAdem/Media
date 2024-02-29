@@ -1,29 +1,42 @@
 package com.example.Media.Services;
 
+import com.example.Media.Model.Comment;
 import com.example.Media.Model.Post;
 import com.example.Media.Model.Utilisateur;
+import com.example.Media.Repository.CommentRepository;
 import com.example.Media.Repository.PostRepository;
 import com.example.Media.Repository.UtilisateurRespository;
+import com.example.Media.advice.EmptyCommentException;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class PostService {
 
   @Autowired
   private UtilisateurRespository utilisateurRespository;
-
+  @Autowired
+  private CommentService commentService;
   @Autowired
   private PostRepository postRepository;
+
+  @Autowired
+  private CommentRepository commentRepository;
 
   @Autowired
   private FileStorageService fileStorageService;  // Ajout de l'injection de dépendance
@@ -34,9 +47,16 @@ public class PostService {
       Utilisateur user = optionalUser.get();
 
       Post newPost = new Post();
+
       newPost.setCaption(caption);
-      newPost.setCreatedAt(LocalDateTime.now());
       newPost.setUser(user);
+      newPost.setLikeCount(0);
+      newPost.setShareCount(0);
+      newPost.setCommentCount(0);
+      newPost.setIsTypeShare(false);
+      newPost.setSharedPost(null);
+      newPost.setDateCreated(new Date());
+      newPost.setDateLastModified(new Date());
 
       // Gérer le fichier média
       if (mediaFile != null && !mediaFile.isEmpty()) {
@@ -52,10 +72,7 @@ public class PostService {
       throw new Exception("Utilisateur non trouvé");
     }
   }
-  public byte[] getImageData(String imageFileName) throws IOException {
-    Path imagePath = fileStorageService.getFileStorageLocation().resolve(imageFileName).normalize();
-    return Files.readAllBytes(imagePath);
-  }
+
 
   public byte[] getVideoData(String videoFileName) throws IOException {
     Path videoPath = fileStorageService.getFileStorageLocation().resolve(videoFileName).normalize();
@@ -119,26 +136,74 @@ public class PostService {
       throw new Exception("Post not found");
     }
   }
-
   public Post likePost(Long postId, Long userId) throws Exception {
     Post post = findPostById(postId);
     if (post != null) {
       Optional<Utilisateur> optionalUser = utilisateurRespository.findById(userId);
       if (optionalUser.isPresent()) {
         Utilisateur user = optionalUser.get();
-
-        if (post.getLiked().contains(user)) {
-          post.getLiked().remove(user);
-        } else {
-          post.getLiked().add(user);
+        List<Utilisateur> likeList = post.getLikeList();
+        if (!likeList.contains(user)) {
+          likeList.add(user);
+          post.setLikeCount(post.getLikeCount() + 1);
+          return postRepository.save(post);
         }
-
-        return postRepository.save(post);
-      } else {
-        throw new Exception("User not found");
+        throw new Exception("User already liked this post.");
       }
-    } else {
-      throw new Exception("Post not found");
+      throw new Exception("User not found.");
     }
+    throw new Exception("Post not found.");
+  }
+
+  public Post unlikePost(Long postId, Long userId) throws Exception {
+    Post post = findPostById(postId);
+    if (post != null) {
+      Optional<Utilisateur> optionalUser = utilisateurRespository.findById(userId);
+      if (optionalUser.isPresent()) {
+        Utilisateur user = optionalUser.get();
+        List<Utilisateur> likeList = post.getLikeList();
+        if (likeList.contains(user)) {
+          likeList.remove(user);
+          post.setLikeCount(post.getLikeCount() - 1);
+          return postRepository.save(post);
+        }
+        throw new Exception("User hasn't liked this post.");
+      }
+      throw new Exception("User not found.");
+    }
+    throw new Exception("Post not found.");
+  }
+  public List<Utilisateur> getLikesByPostPaginate(Post post, int page, int size) {
+    int start = page * size;
+    int end = Math.min(start + size, post.getLikeList().size());
+    return post.getLikeList().subList(start, end);
+  }
+  public Comment createPostComment(Long postId, String content, Long userId) {
+    if (StringUtils.isEmpty(content)) throw new EmptyCommentException();
+
+    Utilisateur authUser = utilisateurRespository.findById(userId)
+      .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+
+    Post targetPost = findPostById(postId);
+    Comment savedComment = commentService.createNewComment(content, targetPost, userId);
+    targetPost.setCommentCount(targetPost.getCommentCount() + 1);
+    postRepository.save(targetPost);
+
+    return savedComment;
+  }
+
+  public Comment updatePostComment(Long commentId, Long postId, String content, Long userId) {
+    if (StringUtils.isEmpty(content)) throw new EmptyCommentException();
+
+    return commentService.updateComment(commentId, content, userId);
+  }
+
+  public void deletePostComment(Long commentId, Long postId, Long userId) {
+    Post targetPost = findPostById(postId);
+    commentService.deleteComment(commentId, userId);
+    targetPost.setCommentCount(targetPost.getCommentCount() - 1);
+    targetPost.setDateLastModified(new Date());
+    postRepository.save(targetPost);
   }
 }
+

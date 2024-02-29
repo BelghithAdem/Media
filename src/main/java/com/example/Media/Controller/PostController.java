@@ -1,10 +1,14 @@
 package com.example.Media.Controller;
 
+import com.example.Media.Model.Comment;
 import com.example.Media.Model.Post;
 
+import com.example.Media.Model.Utilisateur;
+import com.example.Media.Services.CommentService;
 import com.example.Media.Services.PostService;
+import com.example.Media.Services.UtilisateurService;
 import com.example.Media.advice.ApiResponse;
-import com.example.Media.dto.PostResponseDTO;
+import com.example.Media.advice.CommentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -16,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 
 // Controller
 
@@ -28,6 +30,8 @@ public class PostController {
 
   @Autowired
   private PostService postService;
+  @Autowired
+  private CommentService commentService;
 
   @PostMapping("/user/{userId}")
   public ResponseEntity<?> createPost(
@@ -60,25 +64,7 @@ public class PostController {
   }
 
 
-  @GetMapping("/video/{postId}")
-  public ResponseEntity<Resource> serveVideo(@PathVariable Long postId) {
-    try {
-      Post post = postService.findPostById(postId);
 
-      if (post != null && post.getVideoFileName() != null) {
-        byte[] videoData = postService.getVideoData(post.getVideoFileName());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-        return new ResponseEntity<>(new ByteArrayResource(videoData), headers, HttpStatus.OK);
-      } else {
-        return ResponseEntity.notFound().build();
-      }
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
   @GetMapping("/all")
   public ResponseEntity<List<Post>> getAllPosts() {
     try {
@@ -111,11 +97,7 @@ public class PostController {
     }
   }
 
-  @GetMapping
-  public ResponseEntity<List<Post>> findAllPosts() {
-    List<Post> posts = postService.findAllPosts();
-    return new ResponseEntity<>(posts, HttpStatus.OK);
-  }
+
 
 
   @PutMapping("/{postId}/user/{userId}/save")
@@ -128,13 +110,103 @@ public class PostController {
     }
   }
 
-  @PutMapping("/{postId}/user/{userId}/like")
-  public ResponseEntity<Post> likePost(@PathVariable Long postId, @PathVariable Long userId) {
+
+  @PostMapping("/posts/{postId}/like")
+  public ResponseEntity<?> likePost(@PathVariable("postId") Long postId, @RequestParam Long userId) {
     try {
-      Post post = postService.likePost(postId, userId);
-      return new ResponseEntity<>(post, HttpStatus.OK);
+      postService.likePost(postId, userId);
+      return ResponseEntity.ok().build();
     } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
   }
+  @GetMapping("/{postId}/likes")
+  public ResponseEntity<?> getPostLikes(@PathVariable("postId") Long postId,
+                                        @RequestParam("page") Integer page,
+                                        @RequestParam("size") Integer size) {
+    try {
+      page = page < 0 ? 0 : page - 1;
+      size = size <= 0 ? 5 : size;
+      Post targetPost = postService.findPostById(postId);
+      List<Utilisateur> postLikerList = postService.getLikesByPostPaginate(targetPost, page, size);
+      return new ResponseEntity<>(postLikerList, HttpStatus.OK);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+  }
+  @PostMapping("/posts/{postId}/unlike")
+  public ResponseEntity<?> unlikePost(@PathVariable("postId") Long postId, @RequestParam Long userId) {
+    try {
+      postService.unlikePost(postId, userId);
+      return ResponseEntity.ok().build();
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+  }
+  @GetMapping("/posts/{postId}/comments")
+  public ResponseEntity<?> getPostComments(@PathVariable("postId") Long postId,
+                                           @RequestParam("page") Integer page,
+                                           @RequestParam("size") Integer size,
+                                           @RequestParam("userId") Long userId) {
+    page = page < 0 ? 0 : page-1;
+    size = size <= 0 ? 5 : size;
+    Post targetPost = postService.findPostById(postId);
+    List<CommentResponse> postCommentResponseList = commentService.getPostCommentsPaginate(targetPost, page, size, userId);
+    return new ResponseEntity<>(postCommentResponseList, HttpStatus.OK);
+  }
+
+  @PostMapping("/{postId}/comments/create")
+  public ResponseEntity<?> createPostComment(@PathVariable("postId") Long postId,
+                                             @RequestParam(value = "content") String content,
+                                             @RequestParam(value = "userId") Long userId) {
+    Comment savedComment = postService.createPostComment(postId, content, userId);
+    CommentResponse commentResponse = CommentResponse.builder()
+      .comment(savedComment)
+      .likedByAuthUser(false)
+      .build();
+    return new ResponseEntity<>(commentResponse, HttpStatus.OK);
+  }
+
+  @PostMapping("/posts/{postId}/comments/{commentId}/update")
+  public ResponseEntity<?> updatePostComment(@PathVariable("commentId") Long commentId,
+                                             @PathVariable("postId") Long postId,
+                                             @RequestParam(value = "content") String content,
+                                             @RequestParam(value = "userId") Long userId) {
+    Comment savedComment = postService.updatePostComment(commentId, postId, content, userId);
+    return new ResponseEntity<>(savedComment, HttpStatus.OK);
+  }
+
+  @PostMapping("/posts/{postId}/comments/{commentId}/delete")
+  public ResponseEntity<?> deletePostComment(@PathVariable("commentId") Long commentId,
+                                             @PathVariable("postId") Long postId,
+                                             @RequestParam(value = "userId") Long userId) {
+    postService.deletePostComment(commentId, postId, userId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping("/posts/comments/{commentId}/like")
+  public ResponseEntity<?> likePostComment(@PathVariable("commentId") Long commentId,
+                                           @RequestParam(value = "userId") Long userId) {
+    commentService.likeComment(commentId, userId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping("/posts/comments/{commentId}/unlike")
+  public ResponseEntity<?> unlikePostComment(@PathVariable("commentId") Long commentId,
+                                             @RequestParam(value = "userId") Long userId) {
+    commentService.unlikeComment(commentId, userId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @GetMapping("/posts/comments/{commentId}/likes")
+  public ResponseEntity<?> getCommentLikeList(@PathVariable("commentId") Long commentId,
+                                              @RequestParam("page") Integer page,
+                                              @RequestParam("size") Integer size) {
+    page = page < 0 ? 0 : page-1;
+    size = size <= 0 ? 5 : size;
+    Comment targetComment = commentService.getCommentById(commentId);
+    List<Utilisateur> commentLikes = commentService.getLikesByCommentPaginate(targetComment, page, size);
+    return new ResponseEntity<>(commentLikes, HttpStatus.OK);
+  }
+
 }

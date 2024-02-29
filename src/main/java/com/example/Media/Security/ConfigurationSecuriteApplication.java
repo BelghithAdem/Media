@@ -17,10 +17,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
@@ -101,15 +104,18 @@ public class ConfigurationSecuriteApplication{
                 "/swagger.json",
                 "/webjars/**",
                 "/swagger-resources/**",
-                "/swagger-ui/**,",
+                "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/"
               ).permitAll()
               .requestMatchers(POST,"/inscription").permitAll()
               .requestMatchers(POST,"/activation").permitAll()
               .requestMatchers(POST,"/connexion").permitAll()
+              .requestMatchers(POST,"/user/**").permitAll()
+              .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
+              .requestMatchers(HttpMethod.GET, "/conversation").permitAll()
               .requestMatchers(HttpMethod.GET, "/api/posts/image/**").permitAll()
-              .requestMatchers(HttpMethod.GET, "/ws").permitAll()
+              .requestMatchers(HttpMethod.GET, "/stomp-endpoint/**").permitAll()
               .anyRequest().authenticated()
         )
         .sessionManagement(httpSecuritySessionManagementConfigurer ->
@@ -137,5 +143,6 @@ public class ConfigurationSecuriteApplication{
   public MultipartResolver multipartResolver() {
     return new StandardServletMultipartResolver();
   }
+
 
 }

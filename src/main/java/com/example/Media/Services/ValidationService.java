@@ -33,7 +33,7 @@ public class ValidationService {
 
         validation.setCode(code);
         this.validationRepository.save(validation);
-        this.notificationService.envoyer(validation);
+       // this.notificationService.envoyer(validation);
     }
     public Validation Lireenfonctionducode(String code){
         return this.validationRepository.findByCode(code).orElseThrow(()-> new RuntimeException("votre code invalide"));

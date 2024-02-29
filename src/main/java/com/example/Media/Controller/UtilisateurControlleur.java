@@ -3,8 +3,9 @@ package com.example.Media.Controller;
 import com.example.Media.Security.JwtService;
 import com.example.Media.Services.UtilisateurService;
 import com.example.Media.advice.ApiResponse;
-import com.example.Media.dto.AuthentificationDTO;
+import com.example.Media.dto.*;
 import com.example.Media.Model.Utilisateur;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,8 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @ComponentScan
@@ -32,10 +33,19 @@ public class UtilisateurControlleur {
     private JwtService jwtService;
 
   @PostMapping(path = "inscription")
-  public ResponseEntity<ApiResponse> inscription(@RequestBody Utilisateur utilisateur) {
+  public ResponseEntity<ApiResponse> inscription(@RequestBody SignupDto signupDto) {
     try {
       log.info("Inscription");
+
+      // Convertir SignupDto en Utilisateur
+      Utilisateur utilisateur = new Utilisateur();
+      utilisateur.setEmail(signupDto.getEmail());
+      utilisateur.setPassword(signupDto.getPassword());
+      utilisateur.setNom(signupDto.getNom());
+      utilisateur.setPrenom(signupDto.getPrenom());
+
       this.utilisateurService.inscription(utilisateur);
+
       return new ResponseEntity<>(new ApiResponse("Inscription réussie"), HttpStatus.OK);
     } catch (RuntimeException e) {
       return new ResponseEntity<>(
@@ -72,26 +82,80 @@ public class UtilisateurControlleur {
         }
         return null;
     }
-
-
-  @PostMapping("/user/{userId}/profil")
-  public ResponseEntity<?> updateUserProfile(
-    @RequestParam(name = "profileImage", required = false) Optional<MultipartFile> profileImage,
-    @PathVariable Long userId
-  ) {
+  @PostMapping("/account/update/info")
+  public ResponseEntity<?> updateUserInfo(@RequestParam Long userId, @RequestBody @Valid UpdateUserInfoDto updateUserInfoDto) {
+    Utilisateur updatedUser = utilisateurService.updateUserInfo(userId, updateUserInfoDto);
+    return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+  }
+  @PostMapping("/account/follow/{userId}")
+  public ResponseEntity<?> followUser(@PathVariable("userId") Long userId) {
     try {
-      if (profileImage.isPresent()) {
-        utilisateurService.updateUserProfile(userId, profileImage.get());
-        return ResponseEntity.ok("Profil utilisateur mis à jour avec succès.");
-      } else {
-        return ResponseEntity.badRequest().body("Aucune image de profil fournie.");
-      }
+      utilisateurService.followUser(userId); // Appel de la méthode sur l'instance utilisateurService
+      return new ResponseEntity<>(HttpStatus.OK);
     } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Erreur lors de la mise à jour du profil utilisateur: " + e.getMessage());
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
+  @PostMapping("/account/unfollow/{userId}")
+  public ResponseEntity<?> unfollowUser(@PathVariable("userId") Long userId) {
+    try {
+      utilisateurService.unfollowUser(userId); // Appel de la méthode sur l'instance utilisateurService
+      return new ResponseEntity<>(HttpStatus.OK);
+    } catch (RuntimeException e) {
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  @GetMapping("/users/{userId}/following")
+  public ResponseEntity<List<Utilisateur>> getUserFollowingUsers(@PathVariable Long userId) {
+    List<Utilisateur> followingUsers = utilisateurService.getUserFollowingUsers(userId);
+    return new ResponseEntity<>(followingUsers, HttpStatus.OK);
+  }
+
+  @GetMapping("/users/{userId}/followers")
+  public ResponseEntity<List<Utilisateur>> getUserFollowerUsers(@PathVariable Long userId) {
+    List<Utilisateur> followerUsers = utilisateurService.getUserFollowerUsers(userId);
+    return new ResponseEntity<>(followerUsers, HttpStatus.OK);
+  }
+
+  @PostMapping(path = "utilisateurs/{userId}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<ApiResponse> ajouterPhotoProfil(
+    @PathVariable Long userId,
+    @RequestParam("photo") MultipartFile photo) {
+
+    try {
+      utilisateurService.ajouterPhotoProfil(userId, photo);
+      return new ResponseEntity<>(new ApiResponse("Photo de profil ajoutée avec succès"), HttpStatus.OK);
+    } catch (RuntimeException e) {
+      return new ResponseEntity<>(
+        new ApiResponse(400, "Bad Request", e.getMessage(), "/utilisateurs/" + userId + "/photo",
+          "Erreur lors de l'ajout de la photo de profil"),
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
 
+
+
+  }
+
+
+  @GetMapping("conversation")
+  public ResponseEntity<ApiResponsee> findConversationIdByUser1IdAndUser2Id(@RequestParam("user1") int user1Id, @RequestParam("user2") int user2Id) {
+    return utilisateurService.findConversationIdByUser1IdAndUser2Id(user1Id, user2Id);
+  }
+
+  @GetMapping("/except/{userId}")
+  public ResponseEntity<ApiResponsee> findAllUsersExceptThisUserId(@PathVariable int userId) {
+    return utilisateurService.findAllUsersExceptThisUserId(userId);
+  }
+
+  @GetMapping("/all")
+  public ResponseEntity<ApiResponsee> findAllUsers() {
+    return utilisateurService.findAllUsers();
+  }
+  @PostMapping("/login")
+  public ResponseEntity<ApiResponsee> login(@RequestBody LoginRequest loginRequest) {
+    return utilisateurService.findUserByEmail(loginRequest.getEmail());
+  }
 }
