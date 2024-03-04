@@ -9,6 +9,7 @@ import com.example.Media.Services.PostService;
 import com.example.Media.Services.UtilisateurService;
 import com.example.Media.advice.ApiResponse;
 import com.example.Media.advice.CommentResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -23,7 +24,8 @@ import java.io.IOException;
 import java.util.List;
 
 // Controller
-
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {

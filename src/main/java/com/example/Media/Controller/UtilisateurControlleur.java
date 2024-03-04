@@ -1,5 +1,6 @@
 package com.example.Media.Controller;
 
+import com.example.Media.Repository.UtilisateurRespository;
 import com.example.Media.Security.JwtService;
 import com.example.Media.Services.UtilisateurService;
 import com.example.Media.advice.ApiResponse;
@@ -31,6 +32,7 @@ public class UtilisateurControlleur {
     private AuthenticationManager authenticationManager;
     private UtilisateurService utilisateurService;
     private JwtService jwtService;
+    private UtilisateurRespository utilisateurRespository;
 
   @PostMapping(path = "inscription")
   public ResponseEntity<ApiResponse> inscription(@RequestBody SignupDto signupDto) {
@@ -149,6 +151,17 @@ public class UtilisateurControlleur {
   public ResponseEntity<ApiResponsee> findAllUsersExceptThisUserId(@PathVariable int userId) {
     return utilisateurService.findAllUsersExceptThisUserId(userId);
   }
+   @GetMapping("/users/{userId}")
+      public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+          return utilisateurRespository.findById(userId)
+            .map(utilisateur -> new ResponseEntity<>(utilisateur, HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } catch (Exception e) {
+          return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      }
+
 
   @GetMapping("/all")
   public ResponseEntity<ApiResponsee> findAllUsers() {
