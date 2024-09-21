@@ -1,6 +1,9 @@
 package com.example.Media.advice;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 import com.example.Media.Model.Comment;
 import lombok.*;
 

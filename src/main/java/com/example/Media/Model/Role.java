@@ -1,6 +1,9 @@
 package com.example.Media.Model;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 import com.example.Media.TypeDeRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +12,10 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 @Getter
 @Setter
 @AllArgsConstructor

@@ -3,7 +3,12 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+<<<<<<< HEAD
 
+=======
+# Ignorer le fichier application.proprietaire
+application.proprietaire
+>>>>>>> master
 ### STS ###
 .apt_generated
 .classpath

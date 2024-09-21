@@ -4,14 +4,20 @@ import com.example.Media.Model.Comment;
 import com.example.Media.Model.Post;
 import com.example.Media.Model.Utilisateur;
 import com.example.Media.Repository.CommentRepository;
+<<<<<<< HEAD
 import com.example.Media.Repository.PostRepository;
+=======
+>>>>>>> master
 import com.example.Media.Repository.UtilisateurRespository;
 import com.example.Media.advice.CommentResponse;
 import com.example.Media.advice.InvalidOperationException;
 import com.example.Media.advice.CommentNotFoundException;
 import lombok.RequiredArgsConstructor;
+<<<<<<< HEAD
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+=======
+>>>>>>> master
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -29,12 +35,20 @@ public class CommentService {
 
   public Comment getCommentById(Long commentId) {
     return commentRepository.findById(commentId)
+<<<<<<< HEAD
       .orElseThrow(CommentNotFoundException::new);
+=======
+        .orElseThrow(CommentNotFoundException::new);
+>>>>>>> master
   }
 
   public Comment createNewComment(String content, Post post, Long userId) {
     Utilisateur authUser = utilisateurRespository.findById(userId)
+<<<<<<< HEAD
       .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+=======
+        .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+>>>>>>> master
     Comment newComment = new Comment();
     newComment.setContent(content);
     newComment.setAuthor(authUser);
@@ -47,7 +61,11 @@ public class CommentService {
 
   public Comment updateComment(Long commentId, String content, Long userId) {
     Utilisateur authUser = utilisateurRespository.findById(userId)
+<<<<<<< HEAD
       .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+=======
+        .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+>>>>>>> master
     Comment targetComment = getCommentById(commentId);
     if (targetComment.getAuthor().equals(authUser)) {
       targetComment.setContent(content);
@@ -60,7 +78,11 @@ public class CommentService {
 
   public void deleteComment(Long commentId, Long userId) {
     Utilisateur authUser = utilisateurRespository.findById(userId)
+<<<<<<< HEAD
       .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+=======
+        .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+>>>>>>> master
     Comment targetComment = getCommentById(commentId);
     if (targetComment.getAuthor().equals(authUser)) {
       commentRepository.deleteById(commentId);
@@ -71,7 +93,11 @@ public class CommentService {
 
   public Comment likeComment(Long commentId, Long userId) {
     Utilisateur authUser = utilisateurRespository.findById(userId)
+<<<<<<< HEAD
       .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+=======
+        .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+>>>>>>> master
     Comment targetComment = getCommentById(commentId);
     if (!targetComment.getLikeList().contains(authUser)) {
       targetComment.setLikeCount(targetComment.getLikeCount() + 1);
@@ -85,7 +111,11 @@ public class CommentService {
 
   public Comment unlikeComment(Long commentId, Long userId) {
     Utilisateur authUser = utilisateurRespository.findById(userId)
+<<<<<<< HEAD
       .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+=======
+        .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+>>>>>>> master
     Comment targetComment = getCommentById(commentId);
     if (targetComment.getLikeList().contains(authUser)) {
       targetComment.setLikeCount(targetComment.getLikeCount() - 1);
@@ -93,9 +123,17 @@ public class CommentService {
       targetComment.setDateLastModified(new Date());
       Comment updatedComment = commentRepository.save(targetComment);
 
+<<<<<<< HEAD
       // Suppression de la notification si l'utilisateur n'est pas l'auteur du commentaire
       if (!targetComment.getAuthor().equals(authUser)) {
         // notificationService.removeNotification(...) ; // Assurez-vous d'avoir le service de notification disponible
+=======
+      // Suppression de la notification si l'utilisateur n'est pas l'auteur du
+      // commentaire
+      if (!targetComment.getAuthor().equals(authUser)) {
+        // notificationService.removeNotification(...) ; // Assurez-vous d'avoir le
+        // service de notification disponible
+>>>>>>> master
       }
 
       return updatedComment;
@@ -106,23 +144,40 @@ public class CommentService {
 
   public List<CommentResponse> getPostCommentsPaginate(Post post, Integer page, Integer size, Long userId) {
     Utilisateur authUser = utilisateurRespository.findById(userId)
+<<<<<<< HEAD
       .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
     List<Comment> foundCommentList = commentRepository.findByPost(
       post,
       PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateCreated"))
     );
+=======
+        .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'ID: " + userId));
+    List<Comment> foundCommentList = commentRepository.findByPost(
+        post,
+        PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dateCreated")));
+>>>>>>> master
 
     List<CommentResponse> commentResponseList = new ArrayList<>();
     foundCommentList.forEach(comment -> {
       CommentResponse newCommentResponse = CommentResponse.builder()
+<<<<<<< HEAD
         .comment(comment)
         .likedByAuthUser(comment.getLikeList().contains(authUser))
         .build();
+=======
+          .comment(comment)
+          .likedByAuthUser(comment.getLikeList().contains(authUser))
+          .build();
+>>>>>>> master
       commentResponseList.add(newCommentResponse);
     });
 
     return commentResponseList;
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
   public List<Utilisateur> getLikesByCommentPaginate(Comment comment, int page, int size) {
     int start = page * size;
     int end = Math.min(start + size, comment.getLikeList().size());
@@ -130,4 +185,7 @@ public class CommentService {
   }
 
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> master

@@ -10,7 +10,11 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "demande_ajout")
+<<<<<<< HEAD
 public class DemandeAjout  {
+=======
+public class DemandeAjout {
+>>>>>>> master
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

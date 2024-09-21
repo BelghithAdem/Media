@@ -10,9 +10,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageRequest {
+<<<<<<< HEAD
   Integer  conversationId;
   Integer  senderId;
   Integer  receiverId;
     String message;
     LocalDateTime timestamp;
+=======
+  Integer conversationId;
+  Integer senderId;
+  Integer receiverId;
+  String message;
+  LocalDateTime timestamp;
+>>>>>>> master
 }

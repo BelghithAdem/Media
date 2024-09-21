@@ -41,8 +41,14 @@ public class Validation {
     }
 
     public void setCode(String code) {
+<<<<<<< HEAD
         this.code=code;
     }
+=======
+        this.code = code;
+    }
+
+>>>>>>> master
     // Getter methods
     public Instant getCreation() {
         return creation;
@@ -59,6 +65,10 @@ public class Validation {
     public String getCode() {
         return code;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     public Utilisateur getUtilisateur() {
         return utilisateur;
     }

@@ -1,17 +1,23 @@
 package com.example.Media.Model;
 
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> master
 import lombok.*;
 
 import jakarta.persistence.*;
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> master
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,6 +34,10 @@ public class Avis {
     private Utilisateur utilisateur;
 
     public void setUtilisateur(Utilisateur utilisateur) {
+<<<<<<< HEAD
         this.utilisateur=utilisateur;
+=======
+        this.utilisateur = utilisateur;
+>>>>>>> master
     }
 }

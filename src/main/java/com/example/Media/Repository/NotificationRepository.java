@@ -12,9 +12,21 @@ import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
   Optional<Notification> findByReceiverAndOwningPostAndType(Utilisateur receiver, Post owningPost, String type);
+<<<<<<< HEAD
   List<Notification> findNotificationsByReceiver(Utilisateur receiver, Pageable pageable);
   List<Notification> findNotificationsByReceiverAndIsSeenIsFalse(Utilisateur receiver);
   List<Notification> findNotificationsByReceiverAndIsReadIsFalse(Utilisateur receiver);
   void deleteNotificationByOwningPost(Post owningPost);
+=======
+
+  List<Notification> findNotificationsByReceiver(Utilisateur receiver, Pageable pageable);
+
+  List<Notification> findNotificationsByReceiverAndIsSeenIsFalse(Utilisateur receiver);
+
+  List<Notification> findNotificationsByReceiverAndIsReadIsFalse(Utilisateur receiver);
+
+  void deleteNotificationByOwningPost(Post owningPost);
+
+>>>>>>> master
   void deleteNotificationByOwningComment(Comment owningComment);
 }

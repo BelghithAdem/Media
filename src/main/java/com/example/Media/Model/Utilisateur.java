@@ -33,7 +33,10 @@ public class Utilisateur implements UserDetails {
   @Column(name = "first_name")
   private String nom; // Nom
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
   @Column(name = "last_name")
   private String Prenom; // Prénom
 
@@ -44,9 +47,16 @@ public class Utilisateur implements UserDetails {
   private boolean actif = false;
   private Integer followerCount;
   private Integer followingCount;
+<<<<<<< HEAD
 
   // Dates de naissance et de création du compte
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+=======
+  private boolean mfaEnabled;
+
+  // Dates de naissance et de création du compte
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+>>>>>>> master
   private Date birthDate;
 
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -59,7 +69,29 @@ public class Utilisateur implements UserDetails {
   @Column(length = 16)
   private String gender;
 
+<<<<<<< HEAD
 
+=======
+  // Ajoutez un champ pour stocker le secret de l'authentification à deux facteurs
+  @Column(name = "secret_2fa")
+  private String secret2FA;
+
+  // Ajoutez les méthodes pour gérer le secret de l'authentification à deux
+  // facteurs
+  public String getSecret2FA() {
+    return this.secret2FA;
+  }
+
+  public void setSecret2FA(String secret2FA) {
+    this.secret2FA = secret2FA;
+  }
+
+  // Ajoutez une méthode pour activer l'authentification à deux facteurs
+  public void set2FAEnabled(boolean enabled) {
+    // Vous pouvez ajouter ici la logique pour activer ou désactiver
+    // l'authentification à deux facteurs
+  }
+>>>>>>> master
 
   // Rôle de l'utilisateur
 
@@ -68,11 +100,15 @@ public class Utilisateur implements UserDetails {
 
   @JsonIgnore
   @ManyToMany
+<<<<<<< HEAD
   @JoinTable(
     name = "follow_users",
     joinColumns = @JoinColumn(name = "followed_id"),
     inverseJoinColumns = @JoinColumn(name = "follower_id")
   )
+=======
+  @JoinTable(name = "follow_users", joinColumns = @JoinColumn(name = "followed_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
+>>>>>>> master
 
   private List<Utilisateur> followerUsers = new ArrayList<>();
 
@@ -117,17 +153,35 @@ public class Utilisateur implements UserDetails {
     return this.id;
   }
 
+<<<<<<< HEAD
+=======
+  public String getCurrentCity() {
+    return this.currentCity;
+  }
+
+  public Date getBirth() {
+    return this.birthDate;
+  }
+>>>>>>> master
 
   public String getPrenom() {
     return this.Prenom;
   }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
   public String getGender() {
     return this.gender;
   }
 
+<<<<<<< HEAD
   // Vérifie si le compte de l'utilisateur n'est pas expiré, verrouillé ou que les informations d'identification ne sont pas expirées
+=======
+  // Vérifie si le compte de l'utilisateur n'est pas expiré, verrouillé ou que les
+  // informations d'identification ne sont pas expirées
+>>>>>>> master
   @Override
   public boolean isAccountNonExpired() {
     return this.actif;
@@ -151,7 +205,10 @@ public class Utilisateur implements UserDetails {
 
   // Méthode pour définir le mot de passe manuellement
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
   // Méthode pour définir le rôle de l'utilisateur
   public void setRole(Role role) {
     this.role = role;
@@ -160,7 +217,12 @@ public class Utilisateur implements UserDetails {
   public void setPrenom(String Prenom) {
     this.Prenom = Prenom;
   }
+<<<<<<< HEAD
   public  void setGender(String gender) {
+=======
+
+  public void setGender(String gender) {
+>>>>>>> master
     this.gender = gender;
   }
 
@@ -171,6 +233,7 @@ public class Utilisateur implements UserDetails {
 
   // Getters et setters supplémentaires pour les autres champs de l'utilisateur
 
+<<<<<<< HEAD
 
 
   public void setActif(boolean actif) {
@@ -181,4 +244,17 @@ public class Utilisateur implements UserDetails {
   public void setPassword(String password) {this.mdp=password;}
 
 
+=======
+  public void setActif(boolean actif) {
+    this.actif = actif;
+  }
+
+  public void setPassword(String password) {
+    this.mdp = password;
+  }
+
+  public String getSecret() {
+    return this.secret2FA;
+  }
+>>>>>>> master
 }

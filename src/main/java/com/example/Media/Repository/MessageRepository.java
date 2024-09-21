@@ -1,6 +1,9 @@
 package com.example.Media.Repository;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 import com.example.Media.Model.Conversation;
 import com.example.Media.Model.Message;
 import org.springframework.data.jpa.repository.JpaRepository;

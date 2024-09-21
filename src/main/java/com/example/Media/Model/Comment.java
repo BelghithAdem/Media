@@ -43,17 +43,28 @@ public class Comment {
 
   @JsonIgnore
   @ManyToMany
+<<<<<<< HEAD
   @JoinTable(
     name = "comment_likes",
     joinColumns = @JoinColumn(name = "comment_id"),
     inverseJoinColumns = @JoinColumn(name = "liker_id")
   )
+=======
+  @JoinTable(name = "comment_likes", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "liker_id"))
+>>>>>>> master
   private List<Utilisateur> likeList = new ArrayList<>();
 
   @Override
   public boolean equals(Object o) {
+<<<<<<< HEAD
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
+=======
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+>>>>>>> master
     Comment comment = (Comment) o;
     return Objects.equals(id, comment.id) && Objects.equals(author, comment.author);
   }

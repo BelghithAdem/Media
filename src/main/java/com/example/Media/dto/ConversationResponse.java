@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 public interface ConversationResponse {
 
+<<<<<<< HEAD
     Long getConversationId();
 
   Long getOtherUserId();
@@ -13,4 +14,15 @@ public interface ConversationResponse {
     String getLastMessage();
 
     Timestamp getLastMessageTimestamp();
+=======
+  Long getConversationId();
+
+  Long getOtherUserId();
+
+  String getOtherUserName();
+
+  String getLastMessage();
+
+  Timestamp getLastMessageTimestamp();
+>>>>>>> master
 }
