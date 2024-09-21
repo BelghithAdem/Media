@@ -41,8 +41,9 @@ public class Validation {
     }
 
     public void setCode(String code) {
-        this.code=code;
+        this.code = code;
     }
+
     // Getter methods
     public Instant getCreation() {
         return creation;
@@ -59,6 +60,7 @@ public class Validation {
     public String getCode() {
         return code;
     }
+
     public Utilisateur getUtilisateur() {
         return utilisateur;
     }

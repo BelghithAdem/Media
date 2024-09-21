@@ -33,7 +33,6 @@ public class Utilisateur implements UserDetails {
   @Column(name = "first_name")
   private String nom; // Nom
 
-
   @Column(name = "last_name")
   private String Prenom; // Prénom
 
@@ -64,7 +63,8 @@ public class Utilisateur implements UserDetails {
   @Column(name = "secret_2fa")
   private String secret2FA;
 
-  // Ajoutez les méthodes pour gérer le secret de l'authentification à deux facteurs
+  // Ajoutez les méthodes pour gérer le secret de l'authentification à deux
+  // facteurs
   public String getSecret2FA() {
     return this.secret2FA;
   }
@@ -75,7 +75,8 @@ public class Utilisateur implements UserDetails {
 
   // Ajoutez une méthode pour activer l'authentification à deux facteurs
   public void set2FAEnabled(boolean enabled) {
-    // Vous pouvez ajouter ici la logique pour activer ou désactiver l'authentification à deux facteurs
+    // Vous pouvez ajouter ici la logique pour activer ou désactiver
+    // l'authentification à deux facteurs
   }
 
   // Rôle de l'utilisateur
@@ -85,11 +86,7 @@ public class Utilisateur implements UserDetails {
 
   @JsonIgnore
   @ManyToMany
-  @JoinTable(
-    name = "follow_users",
-    joinColumns = @JoinColumn(name = "followed_id"),
-    inverseJoinColumns = @JoinColumn(name = "follower_id")
-  )
+  @JoinTable(name = "follow_users", joinColumns = @JoinColumn(name = "followed_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
 
   private List<Utilisateur> followerUsers = new ArrayList<>();
 
@@ -138,7 +135,6 @@ public class Utilisateur implements UserDetails {
     return this.currentCity;
   }
 
-
   public Date getBirth() {
     return this.birthDate;
   }
@@ -147,12 +143,12 @@ public class Utilisateur implements UserDetails {
     return this.Prenom;
   }
 
-
   public String getGender() {
     return this.gender;
   }
 
-  // Vérifie si le compte de l'utilisateur n'est pas expiré, verrouillé ou que les informations d'identification ne sont pas expirées
+  // Vérifie si le compte de l'utilisateur n'est pas expiré, verrouillé ou que les
+  // informations d'identification ne sont pas expirées
   @Override
   public boolean isAccountNonExpired() {
     return this.actif;
@@ -176,7 +172,6 @@ public class Utilisateur implements UserDetails {
 
   // Méthode pour définir le mot de passe manuellement
 
-
   // Méthode pour définir le rôle de l'utilisateur
   public void setRole(Role role) {
     this.role = role;
@@ -185,7 +180,8 @@ public class Utilisateur implements UserDetails {
   public void setPrenom(String Prenom) {
     this.Prenom = Prenom;
   }
-  public  void setGender(String gender) {
+
+  public void setGender(String gender) {
     this.gender = gender;
   }
 
@@ -196,15 +192,13 @@ public class Utilisateur implements UserDetails {
 
   // Getters et setters supplémentaires pour les autres champs de l'utilisateur
 
-
-
   public void setActif(boolean actif) {
-        this.actif = actif;
-    }
+    this.actif = actif;
+  }
 
-
-  public void setPassword(String password) {this.mdp=password;}
-
+  public void setPassword(String password) {
+    this.mdp = password;
+  }
 
   public String getSecret() {
     return this.secret2FA;

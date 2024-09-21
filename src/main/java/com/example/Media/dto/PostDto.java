@@ -3,8 +3,6 @@ package com.example.Media.dto;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-
-
 @Getter
 @Setter
 @Builder

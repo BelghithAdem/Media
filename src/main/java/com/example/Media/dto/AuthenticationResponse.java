@@ -17,5 +17,4 @@ public class AuthenticationResponse {
   private boolean mfaEnabled;
   private String secretImageUri;
 
-
 }

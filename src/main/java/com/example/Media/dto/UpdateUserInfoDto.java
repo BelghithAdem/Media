@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
-
 @Getter
 @Setter
 @Builder
@@ -25,20 +24,15 @@ public class UpdateUserInfoDto {
   @Size(max = 64)
   private String Prenom;
 
-
   @Size(max = 16)
   private String gender;
 
-
-
   @Size(max = 64)
   private String currentCity;
-
 
   @Past
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private Date birthDate;
-
 
 }

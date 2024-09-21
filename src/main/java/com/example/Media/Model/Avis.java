@@ -1,16 +1,8 @@
 package com.example.Media.Model;
 
-
-
-
-
-
 import lombok.*;
 
 import jakarta.persistence.*;
-
-
-
 
 @Getter
 @Setter
@@ -28,6 +20,6 @@ public class Avis {
     private Utilisateur utilisateur;
 
     public void setUtilisateur(Utilisateur utilisateur) {
-        this.utilisateur=utilisateur;
+        this.utilisateur = utilisateur;
     }
 }

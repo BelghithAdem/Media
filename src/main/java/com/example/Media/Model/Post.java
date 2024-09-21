@@ -34,7 +34,6 @@ public class Post {
   @ManyToOne
   private Utilisateur user;
 
-
   @Column(nullable = false)
   private Boolean isTypeShare;
 
@@ -49,11 +48,7 @@ public class Post {
 
   @JsonIgnore
   @ManyToMany
-  @JoinTable(
-    name = "post_likes",
-    joinColumns = @JoinColumn(name = "post_id"),
-    inverseJoinColumns = @JoinColumn(name = "liker_id")
-  )
+  @JoinTable(name = "post_likes", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "liker_id"))
   private List<Utilisateur> likeList = new ArrayList<>();
 
   @ManyToOne
@@ -64,20 +59,17 @@ public class Post {
   @OneToMany(mappedBy = "sharedPost")
   private List<Post> shareList = new ArrayList<>();
 
-
-
-
-
   // Constructors
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
     Post post = (Post) o;
     return Objects.equals(id, post.id) && Objects.equals(user, post.user);
   }
-
 
   // Getters and Setters
   public Integer getId() {
@@ -87,7 +79,6 @@ public class Post {
   public void setId(Integer id) {
     this.id = id;
   }
-
 
   public String getCaption() {
     return caption;
@@ -104,6 +95,7 @@ public class Post {
   public void setVideoFileName(String imageFileName) {
     this.videoFileName = videoFileName;
   }
+
   public String getVideoFileName() {
     return videoFileName;
   }
@@ -119,8 +111,5 @@ public class Post {
   public void setUser(Utilisateur user) {
     this.user = user;
   }
-
-
-
 
 }

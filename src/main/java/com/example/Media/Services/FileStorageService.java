@@ -13,10 +13,9 @@ public class FileStorageService {
 
   private final Path fileStorageLocation;
 
-
-
   public FileStorageService() {
-    // Définissez le répertoire de stockage des fichiers. Vous pouvez ajuster cela selon vos besoins.
+    // Définissez le répertoire de stockage des fichiers. Vous pouvez ajuster cela
+    // selon vos besoins.
     this.fileStorageLocation = Path.of("src/main/resources/static/uploads").toAbsolutePath().normalize();
 
     try {
@@ -32,7 +31,8 @@ public class FileStorageService {
 
   public void storeFile(MultipartFile file, String fileName) throws Exception {
     try {
-      // Copier le fichier dans le répertoire de stockage (écraser le fichier s'il existe déjà)
+      // Copier le fichier dans le répertoire de stockage (écraser le fichier s'il
+      // existe déjà)
       Path targetLocation = this.fileStorageLocation.resolve(fileName);
       Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException ex) {

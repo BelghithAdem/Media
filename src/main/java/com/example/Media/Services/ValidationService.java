@@ -1,6 +1,5 @@
 package com.example.Media.Services;
 
-
 import com.example.Media.Model.Utilisateur;
 import com.example.Media.Model.Validation;
 import com.example.Media.Repository.ValidationRespository;
@@ -16,8 +15,6 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 @Service
 public class ValidationService {
     private ValidationRespository validationRepository;
-    private NotificationService notificationService;
-
 
     public void enregister(Utilisateur utilisateur) {
 
@@ -33,10 +30,12 @@ public class ValidationService {
 
         validation.setCode(code);
         this.validationRepository.save(validation);
-      // this.notificationService.envoyer(validation);
+        // this.notificationService.envoyer(validation);
     }
-    public Validation Lireenfonctionducode(String code){
-        return this.validationRepository.findByCode(code).orElseThrow(()-> new RuntimeException("votre code invalide"));
+
+    public Validation Lireenfonctionducode(String code) {
+        return this.validationRepository.findByCode(code)
+                .orElseThrow(() -> new RuntimeException("votre code invalide"));
 
     }
 }

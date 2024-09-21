@@ -1,6 +1,5 @@
 package com.example.Media.advice; // Remplacez "Media" par le nom correct de votre package
 
-
 public class ApiResponse {
   private boolean success;
   private String type;
@@ -18,13 +17,13 @@ public class ApiResponse {
     this.detail = message;
     this.qrCodeUri = qrCodeUri; // Assignation du code QR URI
   }
+
   // Constructeur pour une réponse avec un message uniquement
   public ApiResponse(String message) {
     this.success = true; // Par défaut, une réponse avec un message est considérée comme réussie
     this.status = 200; // Par défaut, un statut de succès
     this.detail = message;
   }
-
 
   // Constructeur pour une réponse d'erreur
   public ApiResponse(int status, String title, String detail, String instance, String error) {
@@ -70,5 +69,3 @@ public class ApiResponse {
     return qrCodeUri;
   }
 }
-
-
