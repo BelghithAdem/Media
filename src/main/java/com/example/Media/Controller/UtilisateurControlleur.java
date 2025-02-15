@@ -71,6 +71,7 @@ public class UtilisateurControlleur {
       );
     }
   }
+
   @PostMapping("/verify")
   public ResponseEntity<?> verifyCode(@RequestBody VerificationRequest verificationRequest) {
     try {
@@ -107,7 +108,6 @@ public class UtilisateurControlleur {
   }
 
 
-
   /// "role":{ "libelle":"ADMINISTRATEUR"}
 
   @PostMapping(path = "activation")
@@ -125,34 +125,41 @@ public class UtilisateurControlleur {
   }
 
   @PostMapping(path = "connexion")
-  public Map<String, String> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
-    final Authentication authenticate = authenticationManager.authenticate(
-      new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password())
-    );
-
-    // Récupérer l'utilisateur à partir de l'e-mail
-    Utilisateur user = utilisateurRespository.findByEmail(authentificationDTO.username())
-      .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-
-    // Créer une carte pour stocker les informations de réponse
+  public ResponseEntity<Map<String, String>> connexion(@RequestBody AuthentificationDTO authentificationDTO) {
     Map<String, String> response = new HashMap<>();
 
-    // Vérifier si l'authentification est réussie et si l'utilisateur a activé la double authentification
-    if (authenticate.isAuthenticated() && user.isMfaEnabled()) {
-      // Générer le token JWT et retourner avec l'indication que MFA est activé
-      response.put("mfaEnabled", "true");
-    } else if (authenticate.isAuthenticated()) {
-      // Si l'authentification réussit et MFA n'est pas activé, retourner simplement le token JWT
-      response.put("mfaEnabled", "false");
-      Map<String, String> jwtResponse = jwtService.generate(authentificationDTO.username());
-      response.putAll(jwtResponse);
-    } else {
-      // Si l'authentification échoue, retourner null
-      return null;
+    // Vérifier si l'utilisateur existe
+    Utilisateur user = utilisateurRespository.findByEmail(authentificationDTO.username())
+      .orElse(null);
+
+    if (user == null) {
+      response.put("success", "false");
+      response.put("reason", "Email non trouvé");
+      return ResponseEntity.ok(response);
     }
 
-    return response;
+    try {
+      Authentication authenticate = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(authentificationDTO.username(), authentificationDTO.password())
+      );
+
+      if (authenticate.isAuthenticated()) {
+        response.put("success", "true");
+        response.put("mfaEnabled", String.valueOf(user.isMfaEnabled()));
+
+        if (!user.isMfaEnabled()) {
+          Map<String, String> jwtResponse = jwtService.generate(authentificationDTO.username());
+          response.putAll(jwtResponse);
+        }
+      }
+    } catch (BadCredentialsException e) {
+      response.put("success", "false");
+      response.put("reason", "Mot de passe incorrect");
+    }
+
+    return ResponseEntity.ok(response);
   }
+
 
 
 
