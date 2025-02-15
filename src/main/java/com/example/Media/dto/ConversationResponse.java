@@ -4,13 +4,13 @@ import java.sql.Timestamp;
 
 public interface ConversationResponse {
 
-    Long getConversationId();
+  Long getConversationId();
 
   Long getOtherUserId();
 
-    String getOtherUserName();
+  String getOtherUserName();
 
-    String getLastMessage();
+  String getLastMessage();
 
-    Timestamp getLastMessageTimestamp();
+  Timestamp getLastMessageTimestamp();
 }

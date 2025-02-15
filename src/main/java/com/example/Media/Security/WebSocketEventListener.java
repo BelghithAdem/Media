@@ -10,7 +10,7 @@ import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
  * WebSocket event listener for handling various WebSocket session events.
  * This component is disabled by commenting out @Component annotation for now.
  */
-//@Component
+// @Component
 public class WebSocketEventListener {
     @EventListener
     private void handleSessionConnected(SessionConnectEvent event) {

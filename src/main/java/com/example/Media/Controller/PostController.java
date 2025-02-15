@@ -6,7 +6,6 @@ import com.example.Media.Model.Post;
 import com.example.Media.Model.Utilisateur;
 import com.example.Media.Services.CommentService;
 import com.example.Media.Services.PostService;
-import com.example.Media.Services.UtilisateurService;
 import com.example.Media.advice.ApiResponse;
 import com.example.Media.advice.CommentResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +37,9 @@ public class PostController {
 
   @PostMapping("/user/{userId}")
   public ResponseEntity<?> createPost(
-    @RequestParam("caption") String caption,
-    @RequestParam("mediaFile") MultipartFile mediaFile,
-    @PathVariable Long userId) {
+      @RequestParam("caption") String caption,
+      @RequestParam("mediaFile") MultipartFile mediaFile,
+      @PathVariable Long userId) {
 
     try {
       Post createdPost = postService.createNewPost(caption, userId, mediaFile);
@@ -54,7 +53,8 @@ public class PostController {
   @GetMapping("/image/{fileName}")
   public ResponseEntity<Resource> serveImageByFileName(@PathVariable String fileName) {
     try {
-      // Utilisez le service pour récupérer les données de l'image par le nom de fichier
+      // Utilisez le service pour récupérer les données de l'image par le nom de
+      // fichier
       byte[] imageData = postService.getImageDataByName(fileName);
 
       HttpHeaders headers = new HttpHeaders();
@@ -65,8 +65,6 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
-
-
 
   @GetMapping("/all")
   public ResponseEntity<List<Post>> getAllPosts() {
@@ -102,9 +100,6 @@ public class PostController {
     }
   }
 
-
-
-
   @PutMapping("/{postId}/user/{userId}/save")
   public ResponseEntity<Post> savePost(@PathVariable Long postId, @PathVariable Long userId) {
     try {
@@ -115,7 +110,6 @@ public class PostController {
     }
   }
 
-
   @PostMapping("/posts/{postId}/like")
   public ResponseEntity<?> likePost(@PathVariable("postId") Long postId, @RequestParam Long userId) {
     try {
@@ -125,10 +119,11 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
   }
+
   @GetMapping("/{postId}/likes")
   public ResponseEntity<?> getPostLikes(@PathVariable("postId") Long postId,
-                                        @RequestParam(value = "page", defaultValue = "1") Integer page,
-                                        @RequestParam(value = "size", defaultValue = "5") Integer size) {
+      @RequestParam(value = "page", defaultValue = "1") Integer page,
+      @RequestParam(value = "size", defaultValue = "5") Integer size) {
     try {
       page = page < 0 ? 0 : page - 1;
       size = size <= 0 ? 5 : size;
@@ -139,6 +134,7 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
   }
+
   @GetMapping("/user/{userId}/posts")
   public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Long userId) {
     try {
@@ -158,66 +154,68 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
   }
+
   @GetMapping("/posts/{postId}/comments")
   public ResponseEntity<?> getPostComments(@PathVariable("postId") Long postId,
-                                           @RequestParam("page") Integer page,
-                                           @RequestParam("size") Integer size,
-                                           @RequestParam("userId") Long userId) {
-    page = page < 0 ? 0 : page-1;
+      @RequestParam("page") Integer page,
+      @RequestParam("size") Integer size,
+      @RequestParam("userId") Long userId) {
+    page = page < 0 ? 0 : page - 1;
     size = size <= 0 ? 5 : size;
     Post targetPost = postService.findPostById(postId);
-    List<CommentResponse> postCommentResponseList = commentService.getPostCommentsPaginate(targetPost, page, size, userId);
+    List<CommentResponse> postCommentResponseList = commentService.getPostCommentsPaginate(targetPost, page, size,
+        userId);
     return new ResponseEntity<>(postCommentResponseList, HttpStatus.OK);
   }
 
   @PostMapping("/{postId}/comments/create")
   public ResponseEntity<?> createPostComment(@PathVariable("postId") Long postId,
-                                             @RequestParam(value = "content") String content,
-                                             @RequestParam(value = "userId") Long userId) {
+      @RequestParam(value = "content") String content,
+      @RequestParam(value = "userId") Long userId) {
     Comment savedComment = postService.createPostComment(postId, content, userId);
     CommentResponse commentResponse = CommentResponse.builder()
-      .comment(savedComment)
-      .likedByAuthUser(false)
-      .build();
+        .comment(savedComment)
+        .likedByAuthUser(false)
+        .build();
     return new ResponseEntity<>(commentResponse, HttpStatus.OK);
   }
 
   @PostMapping("/posts/{postId}/comments/{commentId}/update")
   public ResponseEntity<?> updatePostComment(@PathVariable("commentId") Long commentId,
-                                             @PathVariable("postId") Long postId,
-                                             @RequestParam(value = "content") String content,
-                                             @RequestParam(value = "userId") Long userId) {
+      @PathVariable("postId") Long postId,
+      @RequestParam(value = "content") String content,
+      @RequestParam(value = "userId") Long userId) {
     Comment savedComment = postService.updatePostComment(commentId, postId, content, userId);
     return new ResponseEntity<>(savedComment, HttpStatus.OK);
   }
 
   @PostMapping("/posts/{postId}/comments/{commentId}/delete")
   public ResponseEntity<?> deletePostComment(@PathVariable("commentId") Long commentId,
-                                             @PathVariable("postId") Long postId,
-                                             @RequestParam(value = "userId") Long userId) {
+      @PathVariable("postId") Long postId,
+      @RequestParam(value = "userId") Long userId) {
     postService.deletePostComment(commentId, postId, userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PostMapping("/posts/comments/{commentId}/like")
   public ResponseEntity<?> likePostComment(@PathVariable("commentId") Long commentId,
-                                           @RequestParam(value = "userId") Long userId) {
+      @RequestParam(value = "userId") Long userId) {
     commentService.likeComment(commentId, userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PostMapping("/posts/comments/{commentId}/unlike")
   public ResponseEntity<?> unlikePostComment(@PathVariable("commentId") Long commentId,
-                                             @RequestParam(value = "userId") Long userId) {
+      @RequestParam(value = "userId") Long userId) {
     commentService.unlikeComment(commentId, userId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @GetMapping("/posts/comments/{commentId}/likes")
   public ResponseEntity<?> getCommentLikeList(@PathVariable("commentId") Long commentId,
-                                              @RequestParam("page") Integer page,
-                                              @RequestParam("size") Integer size) {
-    page = page < 0 ? 0 : page-1;
+      @RequestParam("page") Integer page,
+      @RequestParam("size") Integer size) {
+    page = page < 0 ? 0 : page - 1;
     size = size <= 0 ? 5 : size;
     Comment targetComment = commentService.getCommentById(commentId);
     List<Utilisateur> commentLikes = commentService.getLikesByCommentPaginate(targetComment, page, size);

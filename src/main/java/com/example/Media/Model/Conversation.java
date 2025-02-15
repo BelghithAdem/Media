@@ -24,6 +24,4 @@ public class Conversation {
   @JoinColumn(name = "user2_id")
   private Utilisateur user2;
 
-
 }
-

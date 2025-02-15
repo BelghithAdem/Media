@@ -13,11 +13,12 @@ public class UserDataDTO {
   private String lastName;
   private String email;
   private String photoProfile;
+
   public UserDataDTO(Long userId, String firstName, String lastName, String photoProfile) {
     this.userId = userId;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.photoProfile=photoProfile;
+    this.photoProfile = photoProfile;
   }
   // Getters and setters
 }

@@ -12,9 +12,9 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class MessageResponse {
-    Long messageId;
+  Long messageId;
   Long senderId;
   Long receiverId;
-    String message;
-    Date timestamp;
+  String message;
+  Date timestamp;
 }

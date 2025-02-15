@@ -56,10 +56,13 @@ public class Notification {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
     Notification that = (Notification) o;
-    return id.equals(that.id) && type.equals(that.type) && receiver.equals(that.receiver) && owningPost.equals(that.owningPost);
+    return id.equals(that.id) && type.equals(that.type) && receiver.equals(that.receiver)
+        && owningPost.equals(that.owningPost);
   }
 
   @Override
